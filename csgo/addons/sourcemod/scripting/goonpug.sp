@@ -149,11 +149,11 @@ public OnPluginStart()
     RegConsoleCmd("sm_forfeit", Command_Forfeit, "Initializes a forfeit vote.");
     RegConsoleCmd("sm_restart", Command_Restart, "Start a vote to restart a match.");
     RegConsoleCmd("sm_hp", Command_Hp, "Return all players current HP.");
+    RegConsoleCmd("sm_unreadylist", Command_UnreadyList, "lists all players who are currently not ready");
     RegAdminCmd("sm_lo3", Command_Lo3, ADMFLAG_CHANGEMAP, "Starts a live match lo3");
     RegAdminCmd("sm_warmup", Command_Warmup, ADMFLAG_CHANGEMAP, "Starts a warmup");
     RegAdminCmd("sm_unlockteams", Command_UnlockTeams, ADMFLAG_CHANGEMAP, "Unlocks teams");
     RegAdminCmd("sm_lockteams", Command_LockTeams, ADMFLAG_CHANGEMAP, "Locks teams");
-    RegAdminCmd("sm_kickunready", Command_KickUnready, ADMFLAG_KICK, "Kicks unready players");
 
     // Hook commands
     AddCommandListener(Command_Jointeam, "jointeam");
@@ -1060,7 +1060,7 @@ StopServerDemo()
  */
 StartLiveMatch()
 {
-    StartServerDemo();
+    //StartServerDemo();
     ChangeMatchState(MS_LO3);
     ServerCommand("exec goonpug_match.cfg\n");
     PrintToChatAll("Live on 3...");
@@ -1530,27 +1530,24 @@ public Action:Command_Hp(client, args)
 /**
  *Kicks one "random" unready player
  **/
-public Action:Command_KickUnready(client, args)
+public Action:Command_UnreadyList(client, args)
 {
     if (!NeedReadyUp())
     {
         PrintToChat(client, "[GP] Nobody still needs to ready up");
         return Plugin_Handled;
     }
+    PrintToChatAll("[GP]Players who need to ready up..");
     for (new i = 1; i <= MaxClients; i++)
     {
         if (IsValidPlayer(i) && !g_playerReady[i])
         {
             decl String:name[64];
             GetClientName(i, name, sizeof(name));
-            KickClient(i, "You have been kicked by an admin for being unready.");
-            PrintToChatAll("[GP] %s has been kicked for being unready",
-                           name);
-            return Plugin_Handled;
+            PrintToChatAll("%s", name);
         }
     }
     //This should only happen if no kickable players were found
-    PrintToChat(client, "[GP] No valid unready players were found.");
     return Plugin_Handled;
 }
 
@@ -1644,6 +1641,10 @@ public Action:Command_Say(client, const String:command[], argc)
     if (StrEqual(param, ".ready"))
     {
         return Command_Ready(client, 0);
+    }
+    else if (StrEqual(param, ".unreadylist"))
+    {
+        return Command_UnreadyList(client, 0);
     }
     else if (StrEqual(param, ".hp"))
     {

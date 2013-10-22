@@ -399,10 +399,9 @@ public Menu_MapVote(Handle:menu, MenuAction:action, param1, param2)
             decl winningVotes, totalVotes;
             decl String:mapname[256];
             GetMenuVoteInfo(param2, winningVotes, totalVotes);
-            new Float:percentage = (winningVotes / totalVotes) * 100.0;
             GetMenuItem(menu, param1, mapname, sizeof(mapname));
-            PrintToChatAll("[GP] %s won with %0.f%% of the vote.",
-                mapname, percentage);
+            PrintToChatAll("[GP] %s won with %0.f%% of the vote", mapname, (winningVotes / float(totalVotes) * 100.0));
+            
             SetMatchMap(mapname);
         }
         case MenuAction_VoteCancel:

@@ -95,11 +95,6 @@ new Handle:g_graceTimerTrie = INVALID_HANDLE;
 // Reconnect cash handling
 new Handle:g_cashTrie = INVALID_HANDLE;
 
-/* Vector for all the damage */
-new Handle:hMatchDamage[MAX_ROUNDS]; 
-/* Vector for all the kills */
-new Handle:hMatchKills[MAX_ROUNDS]; 
-
 // Structure for storing players health information
 enum playerHpDataStruct
 {
@@ -1837,8 +1832,6 @@ public Action:Event_PlayerDeath(Handle:event, const String:name[], bool:dontBroa
 public Action:Event_RoundStart(Handle:event, const String:name[], bool:dontBroadcast)
 {
     CurrentRound++;
-    hMatchDamage[CurrentRound] = CreateArray();
-    hMatchKills[CurrentRound] = CreateArray();
     for (new i = 1; i <= MaxClients; i++)
     {
         if (IsClientInGame(i) && IsPlayerAlive(i))
